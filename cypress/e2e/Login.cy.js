@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 
 describe('Login', () => {
-  it('Standard User', () => {
+  it.only('Standard User', () => {
   
     cy.get('@usersFixture').then((users) => {
       cy.get(loginLocators.INPUT_USERNAME)
@@ -71,4 +71,3 @@ describe('Login', () => {
   });
 
 });
-ei
