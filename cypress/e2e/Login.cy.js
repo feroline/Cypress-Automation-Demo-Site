@@ -78,6 +78,10 @@ describe('Login', () => {
   });
 
   
+  /**
+   * EXPLAIN: This test is not failing because the maxTime is set to 4000 in cypress.config.js, 
+   * the glitch is not so slow to fail the test of usbility.
+   */
   it('Verify login with performance glitch user', () => {
 
     cy.get('@usersFixture').then((users) => {
@@ -92,6 +96,95 @@ describe('Login', () => {
     cy.url()
       .should('include', Cypress.env('urls').inventory);
 
+  });
+
+  it('Verify login with blank password and username', () => {
+    cy.get(loginLocators.INPUT_USERNAME)
+      .type('{backspace}{backspace}{backspace}');
+
+    cy.get(loginLocators.INPUT_PASSWORD)
+      .type('{backspace}{backspace}{backspace}');
+
+    cy.get(loginLocators.BUTTON_LOGIN)
+      .click();
+
+    cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
+      .should('be.visible')
+      .get(loginLocators.TEXT_MESSAGE)
+      .and('contain', 'Epic sadface: Username is required');
+  });
+
+
+  it('Verify login with blank password', () => {
+
+    cy.get('@usersFixture').then((users) => {
+      cy.get(loginLocators.INPUT_USERNAME)
+        .type(users.username.performance_glitch);
+      cy.get(loginLocators.INPUT_PASSWORD)
+        .type('{backspace}{backspace}{backspace}');
+    });
+ 
+    cy.get(loginLocators.BUTTON_LOGIN)
+      .click();
+
+    cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
+      .should('be.visible')
+      .get(loginLocators.TEXT_MESSAGE)
+      .and('contain', 'Epic sadface: Password is required');
+  });
+  
+  it('Verify login with incorrect password and correct username', () => {
+
+    cy.get('@usersFixture').then((users) => {
+      cy.get(loginLocators.INPUT_USERNAME)
+        .type(users.username.standard);
+      cy.get(loginLocators.INPUT_PASSWORD)
+        .type('123456');
+    });
+
+    cy.get(loginLocators.BUTTON_LOGIN)
+    .click();
+
+  cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
+    .should('be.visible')
+    .get(loginLocators.TEXT_MESSAGE)
+    .and('contain', 'Epic sadface: Username and password do not match any user in this service');
+  });
+  
+  it('Verify login with correct password and incorrect username', () => {
+
+    cy.get('@usersFixture').then((users) => {
+      cy.get(loginLocators.INPUT_USERNAME)
+        .type('incorrertUser-1');
+      cy.get(loginLocators.INPUT_PASSWORD)
+        .type(users.password);
+    });
+
+    cy.get(loginLocators.BUTTON_LOGIN)
+    .click();
+
+  cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
+    .should('be.visible')
+    .get(loginLocators.TEXT_MESSAGE)
+    .and('contain', 'Epic sadface: Username and password do not match any user in this service');
+  });
+
+  it('Verify login with correct password and incorrect username', () => {
+
+    cy.get('@usersFixture').then((users) => {
+      cy.get(loginLocators.INPUT_USERNAME)
+        .type('incorrertUser-1');
+      cy.get(loginLocators.INPUT_PASSWORD)
+        .type('incorrectPassword-1');
+    });
+
+    cy.get(loginLocators.BUTTON_LOGIN)
+    .click();
+
+  cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
+    .should('be.visible')
+    .get(loginLocators.TEXT_MESSAGE)
+    .and('contain', 'Epic sadface: Username and password do not match any user in this service');
   });
 
 });

@@ -10,7 +10,7 @@ module.exports = defineConfig({
     baseUrl: baseUrl,
     chromeWebSecurity: false,
     experimentalModifyObstructiveThirdPartyCode: true,
-    execTimeout: 40000,
+    execTimeout: 4000,
     env: {
       urls:{
         baseUrl: baseUrl,
