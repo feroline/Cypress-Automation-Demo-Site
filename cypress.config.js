@@ -1,4 +1,5 @@
 const { defineConfig } = require("cypress");
+const baseUrl = "https://www.saucedemo.com";
 
 module.exports = defineConfig({
   projectId: "155e11",
@@ -6,11 +7,13 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: "https://www.saucedemo.com",
+    baseUrl: baseUrl,
     chromeWebSecurity: false,
     experimentalModifyObstructiveThirdPartyCode: true,
+    execTimeout: 40000,
     env: {
       urls:{
+        baseUrl: baseUrl,
         inventory: "/inventory.html",
       }
     },

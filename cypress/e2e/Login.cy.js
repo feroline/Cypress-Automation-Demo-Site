@@ -4,12 +4,14 @@ import { loginLocators } from "../support/locators/loginLocators";
 
 beforeEach(() => {
   cy.fixture('usersFixture').as('usersFixture')
+  cy.fixture('urlsFixture').as('urlsFixture');
   cy.visit('/');
 });
 
+//TODO TO REFACTOR: PEGAR O VALOR DE /STATIC/MEDIA/${VALOR} E COMPARAR COM O VALOR DA FIXTURE E DO ATTR
 describe('Login', () => {
-  it.only('Standard User', () => {
-  
+  it('Verify correct image to login with Standard User', () => {
+
     cy.get('@usersFixture').then((users) => {
       cy.get(loginLocators.INPUT_USERNAME)
         .type(users.username.standard);
@@ -18,25 +20,24 @@ describe('Login', () => {
     });
     cy.get(loginLocators.BUTTON_LOGIN)
       .click();
-      
+
     cy.url()
-      .should('include',Cypress.env('urls').inventory);
-    
-    let srcInventoryItens = [
-      '/static/media/sauce-backpack-1200x1500.0a0b85a3.jpg',
-      '/static/media/bike-light-1200x1500.37c843b0.jpg',
-      '/static/media/bolt-shirt-1200x1500.c2599ac5.jpg',
-      '/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg', 
-      '/static/media/red-onesie-1200x1500.2ec615b2.jpg',
-    ];
-    
-    srcInventoryItens.forEach((src) => {
-      cy.get('img.inventory_item_img').should('have.attr', 'src', src);
+      .should('include', Cypress.env('urls').inventory);
+
+    cy.get('@urlsFixture').then(urls => {
+      //Faço o wrap para poder usar o alias e as assertions serem visualizadas no runner, 
+      // com o expect não é possível que sejam visualizadas
+      cy.wrap(urls.inventoryItens).as('inventoryItens');
+
+      cy.get(loginLocators.INVENTORY_IMGS).each($el => {
+        cy.get('@inventoryItens').should('include', $el.attr('src'));
+      });
     });
-    
+
+
   });
-  
-  it('Locked Out User', () => {
+
+  it('Verify error message to Locked Out User', () => {
 
     cy.get('@usersFixture').then((users) => {
       cy.get(loginLocators.INPUT_USERNAME)
@@ -47,13 +48,16 @@ describe('Login', () => {
     cy.get(loginLocators.BUTTON_LOGIN)
       .click();
 
+    cy.url()
+      .should('include', Cypress.env('urls').baseUrl);
+
     cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
       .should('be.visible')
       .get(loginLocators.TEXT_MESSAGE)
       .and('contain', 'Epic sadface: Sorry, this user has been locked out.');
   });
 
-  it('Problem User', () => {
+  it('Verify image to login with Problem User', () => {
 
     cy.get('@usersFixture').then((users) => {
       cy.get(loginLocators.INPUT_USERNAME)
@@ -65,9 +69,29 @@ describe('Login', () => {
       .click();
 
     cy.url()
-      .should('include',Cypress.env('urls').inventory);
+      .should('include', Cypress.env('urls').inventory);
+
+    cy.get('@urlsFixture').then(urls => {
+      cy.get(loginLocators.INVENTORY_IMGS).should('have.attr', 'src', urls.errorImg);
+    });
+
+  });
+
   
-    cy.get('img.inventory_item_img').should('have.not.attr', 'src', '/static/media/sl-404.168b1cce.jpg');
+  it('Verify login with performance glitch user', () => {
+
+    cy.get('@usersFixture').then((users) => {
+      cy.get(loginLocators.INPUT_USERNAME)
+        .type(users.username.performance_glitch);
+      cy.get(loginLocators.INPUT_PASSWORD)
+        .type(users.password);
+    });
+    cy.get(loginLocators.BUTTON_LOGIN)
+      .click();
+
+    cy.url()
+      .should('include', Cypress.env('urls').inventory);
+
   });
 
 });
