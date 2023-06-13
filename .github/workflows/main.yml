@@ -4,7 +4,7 @@ jobs:
   forceInstall:
     runs-on: ubuntu-latest
     steps:
-      - run: npm install cypress --force
+      - run: npm install 
   cypress-run:
     runs-on: ubuntu-latest
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
