@@ -6,7 +6,7 @@ beforeEach(() => {
 
 describe("Buying itens", () => {
     describe("Add and Remove to cart", () => {
-        it("Verifying the change of the button", () => {
+        it("Verifying the change of the button with many products", () => {
             cy.get("@products").each((product) => {
                 cy.get(inventoryLocators.INVENTORY_ITEM).each(($el) => {
 
