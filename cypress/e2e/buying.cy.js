@@ -1,4 +1,7 @@
+import { cartLocators } from "../support/locators/cartLocators"; 
 import {inventoryLocators} from "../support/locators/inventoryLocators";
+import { faker } from '@faker-js/faker';
+
 beforeEach(() => {
     cy.fixture("products").as("products");
     cy.login().as("login");
@@ -104,4 +107,56 @@ describe("Buying itens", () => {
                 });
         });
     });
+
+    describe("Confirming the purchase", () => {
+        it("Confirming the purchase with item", () => {
+            cy.get(inventoryLocators.INVENTORY_ITEM_NAME)
+            .first()
+            .click()
+            .then(($el) => {
+                let productName = $el.text();
+
+                cy.get(inventoryLocators.PRODUCT_PAGE.DETAILS_CONTAINER)
+                    .find("button")
+                    .should("have.text", "Add to cart")
+                    .click();
+
+                cy.get(inventoryLocators.CART)
+                    .click();
+                cy.url()
+                    .should("include", Cypress.env("urls").cart);
+                cy.get(inventoryLocators.CART_LIST)
+                    .should("to.contain", productName);
+                cy.get(cartLocators.BTN_CHECKOUT)
+                    .click();
+                cy.url()
+                    .should("include", Cypress.env("urls").checkout);
+                cy.get(cartLocators.INPUT_FIRST_NAME)
+                    .type(faker.person.firstName());
+                cy.get(cartLocators.INPUT_LAST_NAME)
+                    .type(faker.person.lastName()); 
+                cy.get(cartLocators.POSTAL_CODE)
+                    .type(faker.location.zipCode('#####-###'));
+                cy.get(cartLocators.BTN_CONTINUE)
+                    .click();
+                cy.url()
+                    .should("include", Cypress.env("urls").checkoutConfirm);
+                cy.get(cartLocators.BTN_FINISH)
+                    .click();
+                cy.url()
+                    .should("include", Cypress.env("urls").checkoutComplete);
+                cy.get(cartLocators.COMPLETE_CHECKOUT)
+                    .should('be.visible')
+                    .and('contain', 'Thank you for your order!');
+                
+                cy.get(cartLocators.BTN_BACK_PRODUCTS)
+                    .click();
+                cy.url()
+                    .should("include", Cypress.env("urls").inventory);
+            });
+        });
+
+    });
 });
+
+   

@@ -16,6 +16,9 @@ module.exports = defineConfig({
         baseUrl: baseUrl,
         inventory: "/inventory.html",
         cart: "/cart.html",
+        checkout: "/checkout-step-one.html",
+        checkoutConfirm: "/checkout-step-two.html",
+        checkoutComplete: "/checkout-complete.html",
       }
     },
   }
