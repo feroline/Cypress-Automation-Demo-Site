@@ -15,6 +15,7 @@ module.exports = defineConfig({
       urls:{
         baseUrl: baseUrl,
         inventory: "/inventory.html",
+        cart: "/cart.html",
       }
     },
   }
