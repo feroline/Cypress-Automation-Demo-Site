@@ -186,5 +186,21 @@ describe('Login', () => {
     .get(loginLocators.TEXT_MESSAGE)
     .and('contain', 'Epic sadface: Username and password do not match any user in this service');
   });
+  
+  it('Verify access without login', () => {
 
+   cy.intercept(Cypress.env('urls').inventory).then((req) => {
+    cy.wrap(req).should('equal',null);
+   });
+
+    cy.visit('/?/inventory.html');
+
+    cy.get(loginLocators.ERROR_MESSAGE_CONTAINER)
+    .should('be.visible')
+    .get(loginLocators.TEXT_MESSAGE)
+    .and('contain', "Epic sadface: You can only access '/inventory.html' when you are logged in.");
+  })
+  
 });
+
+

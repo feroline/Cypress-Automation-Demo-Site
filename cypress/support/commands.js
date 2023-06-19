@@ -23,3 +23,22 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import { loginLocators } from "./locators/loginLocators";
+//TODO: CREATE A LOGIN WITH A PARAMETER
+Cypress.Commands.add('login', (username, password) => {
+    cy.visit('/');
+    cy.fixture('usersFixture').as('usersFixture')
+    
+    cy.get('@usersFixture').then((users) => {
+        cy.get(loginLocators.INPUT_USERNAME)
+          .type(users.username.standard);
+        cy.get(loginLocators.INPUT_PASSWORD)
+          .type(users.password);
+      });
+      cy.get(loginLocators.BUTTON_LOGIN)
+        .click();
+  
+      cy.url()
+        .should('include', Cypress.env('urls').inventory);
+})
