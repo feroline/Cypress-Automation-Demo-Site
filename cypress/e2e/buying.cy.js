@@ -164,8 +164,8 @@ describe("Buying itens", () => {
       
       doCheckout();
     });
-    //TODO: ADICIONAR CENÁRIO DE COMPRA COM NENHUM ITEM
-    it.only("Confirming the purchase with no item", () => {
+    
+    it.skip("Confirming the purchase with no item", () => {
       cy.get(inventoryLocators.CART).click();
       cy.url().should("include", Cypress.env("urls").cart);
     
@@ -175,7 +175,38 @@ describe("Buying itens", () => {
     });
 
     //TODO: ADICIONAR CENÁRIO DE COMPRA COM DADOS INVÁLIDOS
+    it.skip('Confirming the purchase with invalid data', () => {
+      cy.get(inventoryLocators.CART).click();
+      cy.url().should("include", Cypress.env("urls").cart);
+    
+      cy.get(cartLocators.BTN_CHECKOUT).click();
+      cy.url().should("include", Cypress.env("urls").checkout);
+
+      cy.get(cartLocators.INPUT_FIRST_NAME).type(faker.person.firstName().repeat(100));
+      cy.get(cartLocators.INPUT_LAST_NAME).type(faker.person.lastName().repeat(100));
+      cy.get(cartLocators.POSTAL_CODE).type(
+        faker.location.zipCode("#####")
+      );
+
+      cy.get(cartLocators.BTN_CONTINUE).click();
+      cy.url().should("not.include", Cypress.env("urls").checkoutConfirm);
+    });
+    
     //TODO: ADICIONAR CENÁRIO DE COMPRA SEM DADOS
+    it.only('Confirming the purchase without data', () => {
+      cy.get(inventoryLocators.CART).click();
+      cy.url().should("include", Cypress.env("urls").cart);
+    
+      cy.get(cartLocators.BTN_CHECKOUT).click();
+      cy.url().should("include", Cypress.env("urls").checkout);
+
+      cy.get(cartLocators.INPUT_FIRST_NAME).type('{BACKSPACE}{BACKSPACE}{BACKSPACE}{BACKSPACE}');
+      cy.get(cartLocators.INPUT_LAST_NAME).type('{BACKSPACE}{BACKSPACE}{BACKSPACE}{BACKSPACE}');
+      cy.get(cartLocators.POSTAL_CODE).type('{BACKSPACE}{BACKSPACE}{BACKSPACE}{BACKSPACE}');
+
+      cy.get(cartLocators.BTN_CONTINUE).click();
+      cy.url().should("not.include", Cypress.env("urls").checkoutConfirm);
+    });
     //TODO: ADICIONAR CENÁRIO DE COMPRA SEM O FIRSTNAME
     //TODO: ADICIONAR CENÁRIO DE COMPRA SEM O CEP
     //TODO: ADICIONAR CENÁRIO DE COMPRA SEM O LASTNAME
