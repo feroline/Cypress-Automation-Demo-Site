@@ -132,11 +132,11 @@ describe("Buying itens", () => {
           cy.get(inventoryLocators.CART).click();
           cy.url().should("include", Cypress.env("urls").cart);
           cy.get(inventoryLocators.CART_LIST).should("to.contain", productName);
+
           doCheckout();
         });
     });
 
-    //TODO: ADICIONAR CENÁRIO DE COMPRA COM MAIS DE UM ITEM
     it("Confirming the purchase with +1 itens", () => {
       
       cy.get(inventoryLocators.INVENTORY_ITEM).each(($el) => {
@@ -165,6 +165,15 @@ describe("Buying itens", () => {
       doCheckout();
     });
     //TODO: ADICIONAR CENÁRIO DE COMPRA COM NENHUM ITEM
+    it.only("Confirming the purchase with no item", () => {
+      cy.get(inventoryLocators.CART).click();
+      cy.url().should("include", Cypress.env("urls").cart);
+    
+      cy.get(cartLocators.BTN_CHECKOUT).click();
+      cy.url().should("not.include", Cypress.env("urls").checkout);
+
+    });
+
     //TODO: ADICIONAR CENÁRIO DE COMPRA COM DADOS INVÁLIDOS
     //TODO: ADICIONAR CENÁRIO DE COMPRA SEM DADOS
     //TODO: ADICIONAR CENÁRIO DE COMPRA SEM O FIRSTNAME
